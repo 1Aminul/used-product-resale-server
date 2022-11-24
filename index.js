@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const { ObjectID } = require('bson');
+const { ObjectID, ObjectId } = require('bson');
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
@@ -31,10 +31,22 @@ async function run() {
 
         app.get('/category/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObjectID(id) }
+            const query = { _id: ObjectId(id) }
             const category = await categoryColletion.findOne(query)
             res.send(category)
         })
+
+        // app.put('/category', async(req, res)=>{
+        //     const filter = {};
+        //     const options = {upsert: true}
+        //     const updatedDoc = {
+        //         $set:{
+        //             date: "Nov 24, 2022",
+        //         }
+        //     }
+        //     const category = await categoryColletion.updateMany(filter, updatedDoc, options)
+        //     res.send(category)
+        // })
     }
     finally {
 
