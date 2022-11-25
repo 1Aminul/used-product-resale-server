@@ -22,6 +22,7 @@ async function run() {
         const categoryColletion = client.db('usedProductMarket').collection('category');
         const bookingColletion = client.db('usedProductMarket').collection('booking');
         const usersColletion = client.db('usedProductMarket').collection('users');
+        const productsColletion = client.db('usedProductMarket').collection('products');
 
 
         app.get('/category', async (req, res) => {
@@ -66,6 +67,13 @@ async function run() {
             res.send(result)
         })
 
+
+
+        app.post('/products', async(req, res)=>{
+            const product = req.body;
+            const result = await productsColletion.insertOne(product)
+            res.send(result)
+        })
         // app.get('/category', async(req, res)=>{
         //     const filter = {};
         //     const options = {upsert: true}
