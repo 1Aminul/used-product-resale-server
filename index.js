@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const {  ObjectId } = require('bson');
+const { ObjectId } = require('bson');
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
@@ -34,20 +34,20 @@ async function run() {
 
         app.get('/category/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)}
+            const query = { _id: ObjectId(id) }
             const category = await categoryColletion.findOne(query)
             res.send(category)
-        })  
+        })
 
-        app.get('/bookings', async(req, res)=>{
+        app.get('/bookings', async (req, res) => {
             const email = req.query.email
-            const query = {email: email}
+            const query = { email: email }
             const bookings = await bookingColletion.find(query).toArray()
             res.send(bookings)
         })
 
 
-        app.post('/bookings', async(req, res)=>{
+        app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const result = await bookingColletion.insertOne(booking)
             res.send(result)
@@ -55,19 +55,19 @@ async function run() {
 
 
 
-        app.get('/users', async(req, res)=>{
+        app.get('/users', async (req, res) => {
             const query = {}
             const users = await usersColletion.find(query).toArray()
             res.send(users)
         })
 
-        app.get('/users/:id', async(req, res)=>{
+        app.delete('/users/:id', async (req, res) => {
             const id = req.params.id
-            const query = {_id: ObjectId(id)}
+            const query = { _id: ObjectId(id) }
             const result = await usersColletion.deleteOne(query)
             res.send(result)
         })
-        
+
         app.get('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
@@ -81,26 +81,26 @@ async function run() {
             res.send({ isSeller: user?.option === 'Seller' });
         })
 
-        app.post('/users', async(req, res)=>{
+        app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await usersColletion.insertOne(user)
             res.send(result)
         })
 
-        app.get('/products', async(req, res)=>{
+        app.get('/products', async (req, res) => {
             const query = {}
             const result = await productsColletion.find(query).toArray()
             res.send(result)
         })
 
-        app.post('/products', async(req, res)=>{
+        app.post('/products', async (req, res) => {
             const product = req.body;
             const result = await productsColletion.insertOne(product)
             res.send(result)
         })
 
 
-       
+
 
         // app.get('/category', async(req, res)=>{
         //     const filter = {};
@@ -114,7 +114,7 @@ async function run() {
         //     res.send(category)
         // })
 
-       
+
 
 
 
