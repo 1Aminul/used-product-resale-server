@@ -47,18 +47,27 @@ async function run() {
         })
 
 
-        app.get('/users', async(req, res)=>{
-            const query = {}
-            const users = await usersColletion.find(query).toArray()
-            res.send(users)
-        })
-
         app.post('/bookings', async(req, res)=>{
             const booking = req.body;
             const result = await bookingColletion.insertOne(booking)
             res.send(result)
         })
 
+
+
+        app.get('/users', async(req, res)=>{
+            const query = {}
+            const users = await usersColletion.find(query).toArray()
+            res.send(users)
+        })
+
+        app.get('/users/:id', async(req, res)=>{
+            const id = req.params.id
+            const query = {_id: ObjectId(id)}
+            const result = await usersColletion.deleteOne(query)
+            res.send(result)
+        })
+        
         app.get('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
