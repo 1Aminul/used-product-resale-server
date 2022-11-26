@@ -59,7 +59,18 @@ async function run() {
             res.send(result)
         })
 
-        app.s
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersColletion.findOne(query);
+            res.send({ isAdmin: user?.option === 'Admin' });
+        })
+        app.get('/users/saller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersColletion.findOne(query);
+            res.send({ isSeller: user?.option === 'Seller' });
+        })
 
         app.post('/users', async(req, res)=>{
             const user = req.body;
@@ -67,13 +78,21 @@ async function run() {
             res.send(result)
         })
 
-
+        app.get('/products', async(req, res)=>{
+            const query = {}
+            const result = await productsColletion.find(query).toArray()
+            res.send(result)
+        })
 
         app.post('/products', async(req, res)=>{
             const product = req.body;
             const result = await productsColletion.insertOne(product)
             res.send(result)
         })
+
+
+       
+
         // app.get('/category', async(req, res)=>{
         //     const filter = {};
         //     const options = {upsert: true}
