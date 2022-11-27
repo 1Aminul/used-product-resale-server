@@ -23,6 +23,8 @@ async function run() {
         const bookingColletion = client.db('usedProductMarket').collection('booking');
         const usersColletion = client.db('usedProductMarket').collection('users');
         const productsColletion = client.db('usedProductMarket').collection('products');
+        const advertiseColletion = client.db('usedProductMarket').collection('advertise');
+
 
 
         app.get('/category', async (req, res) => {
@@ -46,14 +48,18 @@ async function run() {
             res.send(bookings)
         })
 
+        app.get('/bookings/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)}
+            const result = await bookingColletion.findOne(query)
+            res.send(result)
+        })
 
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const result = await bookingColletion.insertOne(booking)
             res.send(result)
         })
-
-
 
         app.get('/users', async (req, res) => {
             const query = {}
@@ -65,6 +71,18 @@ async function run() {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
             const result = await usersColletion.deleteOne(query)
+            res.send(result)
+        })
+        app.put('/users/:id', async(req, res)=>{
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)};
+            const options = {upsert: true}
+            const updatedDoc = {
+                $set: {
+                    verification : "verified",
+                }
+            }
+            const result = await usersColletion.updateOne(filter, updatedDoc, options)
             res.send(result)
         })
 
@@ -97,6 +115,38 @@ async function run() {
             const product = req.body;
             const result = await productsColletion.insertOne(product)
             res.send(result)
+        })
+
+        app.put('/products/:id', async(req, res)=>{
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)};
+            const options = {upsert: true}
+            const updatedDoc = {
+                $set: {
+                    advertise : "advertised",
+                }
+            }
+            const result = await productsColletion.updateOne(filter, updatedDoc, options)
+            res.send(result)
+        })
+
+        app.delete('/products/:id', async(req, res)=> {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)}
+            const result  = await productsColletion.deleteOne(query)
+            res.send(result)
+        })
+
+        app.get('/advertiseitem', async(req, res)=>{
+            const query = {};
+            const result = await advertiseColletion.find(query).toArray()
+            res.send(result)
+        })
+
+        app.post('/advertiseitem', async(req, res)=>{
+            const item = req.body;
+            const result = await advertiseColletion.insertOne(item)
+            res.send(result);
         })
 
 
