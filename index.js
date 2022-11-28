@@ -12,6 +12,7 @@ const port = process.env.PORT || 5000
 
 app.use(cors())
 app.use(express.json())
+app.use(express.static("public"));
 
 
 
@@ -27,6 +28,8 @@ async function run() {
         const usersColletion = client.db('usedProductMarket').collection('users');
         const productsColletion = client.db('usedProductMarket').collection('products');
         const advertiseColletion = client.db('usedProductMarket').collection('advertise');
+        const paymentColletion = client.db('usedProductMarket').collection('payments');
+        
 
 
 
@@ -58,15 +61,30 @@ async function run() {
             res.send(result)
         })
 
+        app.put('/bookings/:id', async(req, res)=>{
+            const transaction = req.body;
+            const id = req.params.id
+            const filter = {_id: ObjectId(id)}
+            const options = { upsert: true}
+            const updatedDoc = {
+                $set:{
+                    transactionId: transaction,
+                },
+            }
+            const result = await bookingColletion.insertOne(filter, updatedDoc, options)
+            res.send(result)
+        })
+
 
         app.post('/create-payment-intent', async(req, res)=>{
             const booking = req.body;
+            console.log(booking)
             const price = booking.price;
             const amount = price * 100;
-
+            console.log(amount);
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
-                currency: "usd",
+                currency: "inr",
                "payment_method_types": [
                     "card"
                ]
@@ -78,6 +96,17 @@ async function run() {
               });
         })
 
+        app.get('/payments', async(req, res)=>{
+            const query = {}
+            const result = await paymentColletion.find(query).toArray()
+            res.send(result)
+        })
+
+        app.post('/payments', async(req, res)=>{
+            const payment = req.body;
+            const result = await paymentColletion.insertOne(payment);
+            res.send(result);
+        })
 
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
@@ -129,6 +158,12 @@ async function run() {
             res.send(result)
         })
 
+        // app.get('/products/:email', async (req, res) => {
+        //     const email = req.params.email
+        //     const query = {email: email}
+        //     const result = await productsColletion.find(query).toArray()
+        //     res.send(result)
+        // })
         app.get('/products', async (req, res) => {
             const query = {}
             const result = await productsColletion.find(query).toArray()
@@ -166,6 +201,18 @@ async function run() {
             const result = await advertiseColletion.find(query).toArray()
             res.send(result)
         })
+        // app.put('/advertiseitem/:email', async(req, res)=>{
+        //     const email = req.params.email;
+        //     const filter = {email: email};
+        //     const options = {upsert: true}
+        //     const updatedDoc = {
+        //         $set: {
+        //             verification : "verified",
+        //         }
+        //     }
+        //     const result = await advertiseColletion.updateOne(filter, updatedDoc, options)
+        //     res.send(result)
+        // })
 
         app.post('/advertiseitem', async(req, res)=>{
             const item = req.body;
