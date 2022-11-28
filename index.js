@@ -62,26 +62,24 @@ async function run() {
         })
 
         app.put('/bookings/:id', async(req, res)=>{
-            const transaction = req.body;
+            const transaction = req.headers.transaction;
             const id = req.params.id
             const filter = {_id: ObjectId(id)}
-            const options = { upsert: true}
+            const options = {upsert: true}
             const updatedDoc = {
                 $set:{
                     transactionId: transaction,
                 },
             }
-            const result = await bookingColletion.insertOne(filter, updatedDoc, options)
+            const result = await bookingColletion.updateOne(filter, updatedDoc, options)
             res.send(result)
         })
 
 
         app.post('/create-payment-intent', async(req, res)=>{
             const booking = req.body;
-            console.log(booking)
             const price = booking.price;
             const amount = price * 100;
-            console.log(amount);
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
                 currency: "inr",
@@ -218,6 +216,13 @@ async function run() {
             const item = req.body;
             const result = await advertiseColletion.insertOne(item)
             res.send(result);
+        })
+
+        app.delete('/advertiseitem/:id', async(req, res)=>{
+            const id = req.params.id
+            const query = {_id: ObjectId(id)}
+            const result = await advertiseColletion.deleteOne(query)
+            res.send(result)
         })
 
 
